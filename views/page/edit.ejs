@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>编辑区域</title>
+	<link rel='stylesheet' type="text/css" href="/stylesheets/bootstrap.css" />
+	<!--<link rel='stylesheet' type="text/css" href="http://www.bootcss.com/p/layoutit/css/bootstrap-combined.min.css" />-->
+	
+	<script type="text/javascript" src="/javascripts/jquery-2.0.0.min.js"></script>
+	<!--<script type="text/javascript" src="http://www.bootcss.com/p/layoutit/js/jquery-2.0.0.min.js"></script>-->
+</head>
+<body>
+
+<% include ../include/nav.ejs %>
+
+
+<form name="edit_form" action="/save" method="post">
+<div>
+	<div style="float:left;width:33.333%;padding-right:10px;">
+		<div class="panel panel-info">
+		  <div class="panel-heading">
+			<h3 class="panel-title">JSON编辑面板</h3>
+		  </div>
+		  <div class="panel-body">
+			<textarea name="json" style="width:100%;height:200px;"></textarea>
+		  </div>
+		</div>
+	</div>
+	<div style="float:left;width:33.333%;padding-right:10px;">
+		<div class="panel panel-success">
+		  <div class="panel-heading">
+			<h3 class="panel-title">模板编辑面板</h3>
+		  </div>
+		  <div class="panel-body">
+			<textarea name="temp" style="width:100%;height:200px;"></textarea>
+		  </div>
+		</div>
+	</div>
+	<div style="float:left;width:33.333%;">
+		<div class="panel panel-primary">
+		  <div class="panel-heading">
+			<h3 class="panel-title">预览效果</h3>
+		  </div>
+		  <div class="panel-body">
+			Panel content
+		  </div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div style="text-align:center;">
+	<div class="btn-group btn-group-lg">
+	  <button type="button" class="btn btn-default">预览</button>
+	  <input id="submit" type="submit" class="btn btn-default"/>
+	</div>
+</div>
+</form>
+
+
+</body>
+</html>
