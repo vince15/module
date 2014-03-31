@@ -12,6 +12,9 @@
 
 <% include ../include/nav.ejs %>
 
+<%if(error) {%>
+<div class="alert alert-danger"><%=error%></div>
+<%}%>
 
 <form name="edit_form" action="/save" method="post">
 <div>

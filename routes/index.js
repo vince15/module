@@ -7,12 +7,33 @@ module.exports = function(app) {
 	});
 
 	app.get('/edit', function(req, res) {
-		res.render('page/edit', { title: 'Express' });
+		res.render('page/edit', { error: '' });
 	});
 	
 	app.get('/get', function(req, res) {
-		var temp = new Temp();
-		temp.get(temp.id, function(err, temp) {
+		var _tempId = -1;
+		var id = req.query.id;
+		if(id) {
+			_tempId = id;
+		}
+		Temp.get(_tempId, function(err, temp) {
+			res.send(temp);
+		});
+	});
+	
+	app.get('/update', function(req, res) {
+		var _tempId = -1;
+		var id = req.query.id;
+		if(id) {
+			_tempId = id;
+		}
+		Temp.update(_tempId, function(err, temp) {
+			res.send(temp);
+		});
+	});
+	
+	app.get('/getList', function(req, res) {
+		Temp.getList(function(err, temp) {
 			res.send(temp);
 		});
 	});
@@ -25,23 +46,15 @@ module.exports = function(app) {
 			return res.redirect('/edit');
 		}
 		var temp = new Temp();
-		temp.id = 2;
+		temp.developer = '105362360';
 		temp.json = req.body['json'];
 		temp.temp = req.body['temp'];
-		temp.get(temp.id, function(err, tmp) {
-			if(tmp) {
-				err = '记录已存在';
-			}
+			
+		temp.save(function(err) {
 			if(err) {
 				return res.render('page/edit', {error:err});
 			}
-			
-			temp.save(function(err) {
-				if(err) {
-					return res.render('page/edit', {error:err});
-				}
-				return res.render('page/success', {success:'插入成功'});
-			});
+			return res.render('page/success', {success:'插入成功'});
 		});
 	});
 	

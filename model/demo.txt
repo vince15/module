@@ -1,0 +1,19 @@
+{
+	name : {
+		type : 'text',
+		label : '主题',
+		default : '',
+		max-length : 100
+	},
+	color : {
+		type : 'color',
+		label : '颜色'
+	},
+	link : {
+		type : 'link',
+		label : '跳转链接'
+	}
+}
+
+
+<div><a href="<%=model.link%>" style="color:<%=model.color%>"><%=model.name%></a></div>

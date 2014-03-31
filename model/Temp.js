@@ -1,16 +1,19 @@
-//var mongoDB = require('../db');
+//var db = require('../db');
 
 var MongoClient = require('mongodb').MongoClient
+var BSON = require('mongodb').BSONPure;
 
 
 function Temp(tmp) {
-	//this.id = (new Date()).getTime() + '-' + (Math.random()+'').replace('0.', '');
-	this.id = 1;
+	this._id = null;	// 系统自带的objectid
+	this.developer = '';	// 模板开发者
 	this.json = '';
 	this.temp = '';
 	if(tmp) {
 		for(var i in this) {
-			this[i] = tmp[i];
+			if(tmp[i]) {
+				this[i] = tmp[i];
+			}
 		}
 	}
 }
@@ -19,11 +22,10 @@ module.exports = Temp;
 
 Temp.prototype.save = function(callback) {
 	var temp = {
-		id : this.id,
+		developer : this.developer,
 		json : this.json,
 		temp : this.temp
 	};
-	
 	
 	MongoClient.connect('mongodb://127.0.0.1:27017/module', function(err, db) {
 		if(err) {
@@ -33,34 +35,36 @@ Temp.prototype.save = function(callback) {
 		var collection = db.collection('temps');
 		
 		collection.insert(temp, {save : true}, function(err, temp) {
-				db.close();
-				callback(err, temp);
+			db.close();
+			callback(err, temp);
 		});
 	});
 	
-	/*
-	mongoDB.open(function(err, db) {
-		if(err) {
-			return callback(err);
-		}
-		db.collection('temps', function(err, collection) {
-			if(err) {
-				mongoDB.close();
-				return callback(err);
-			}
-			
-			collection.ensureIndex('id', {unique : true});
-			
-			collection.insert(temp, {save : true}, function(err, temp) {
-				mongoDB.close();
-				callback(err, temp);
-			});
-		});
-	});
-	*/
 };
 
-Temp.prototype.get = function(id, callback) {
+Temp.update = function(id, callback) {
+	var temp = {
+		developer : this.developer,
+		json : this.json,
+		temp : this.temp
+	};
+	
+	MongoClient.connect('mongodb://127.0.0.1:27017/module', function(err, db) {
+		if(err) {
+			return callback(err);
+		};
+
+		var collection = db.collection('temps');
+		var obj_id = BSON.ObjectID.createFromHexString(id);
+		collection.update({_id:obj_id}, {json:'2222',temp:'3333'}, {upsert:true}, function(err, temp) {
+			db.close();
+			callback(err, temp);
+		});
+	});
+	
+};
+
+Temp.get = function(id, callback) {
 
 	MongoClient.connect('mongodb://127.0.0.1:27017/module', function(err, db) {
 		if(err) {
@@ -68,8 +72,8 @@ Temp.prototype.get = function(id, callback) {
 		};
 
 		var collection = db.collection('temps');
-		
-		collection.findOne({id:id}, function(err, doc) {
+		var obj_id = BSON.ObjectID.createFromHexString(id);
+		collection.findOne({_id : obj_id}, function(err, doc) {
 			db.close();
 			if(doc) {
 				var temp = new Temp(doc);
@@ -79,27 +83,26 @@ Temp.prototype.get = function(id, callback) {
 			}
 		});
 	});
-	
-	/*
-	mongoDB.open(function(err, db) {
+};
+
+Temp.getList = function(callback) {
+
+	MongoClient.connect('mongodb://127.0.0.1:27017/module', function(err, db) {
 		if(err) {
 			return callback(err);
-		}
-		db.collection('temps', function(err, db) {
-			if(err) {
-				mongoDB.close();
-				return callback(err);
-			}
-			collection.findOne({id:id}, function(err, doc) {
-				mongoDB.close();
-				if(doc) {
-					var temp = new Temp(doc);
-					return callback(err, temp);
-				}else {
-					return callback(err, null);
-				}
+		};
+
+		var collection = db.collection('temps');
+		
+		collection.find().toArray(function(err, docs) {
+			db.close();
+			var temps = [];
+			docs.forEach(function(doc, index) {
+				var temp = new Temp(doc);
+				temps.push(temp);
 			});
+			return callback(err, temps);
 		});
 	});
-	*/
+
 };
