@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+<title>数据</title>
+	<link rel='stylesheet' type="text/css" href="/stylesheets/bootstrap.css" />
+	<script type="text/javascript" src="/javascripts/jquery-2.0.0.min.js"></script>
+	<!--
+<script type="text/javascript" src="bootstrap.min.js"></script>
+-->
+<script type="text/javascript" src="http://static.paipaiimg.com/js/victor/lib/template.js"></script>
+
+
+</head>
+<body>
+
+<% include ../../include/nav.ejs %>
+
+<form id="test" class="form-horizontal" role="form" style="width:60%;float:right;margin-right:10%;">
+</form>
+
+<div id="module_list_select"></div>
+
+<button id="get_model" type="button" class="btn btn-primary">获取数据</button>
+
+<button id="save_page" type="button" class="btn btn-success">保存页面</button>
+
+<script id="edit_panel_text" type="text/html">
+	<div class="form-group" tag="<#=key#>">
+    	<label class="col-sm-2 control-label"><#if(model.required) {#><span style="color:#F00;">*</span><#}#><#=model.label#>：</label>
+		<#var _size = 2;#>
+		<#if(model.maxLength > 100) {_size=3;}#>
+    	<div class="col-xs-<#=_size#>">
+    		<input type="text" name="<#=name#>" class="form-control" value="<#=model.defaultValue#>">
+  		</div>
+		<label class="control-label"><#=model.desc#></label>
+	</div>
+</script>
+
+<script id="edit_panel_color" type="text/html">
+	<div class="form-group" tag="<#=key#>">
+    	<label class="col-sm-2 control-label"><#if(model.required) {#><span style="color:#F00;">*</span><#}#><#=model.label#>：</label>
+    	<div class="col-xs-1">
+    		<input type="text" name="<#=name#>" class="form-control" value="<#=model.defaultValue#>">
+  		</div>
+		<label class="control-label"><#=model.desc#></label>
+	</div>
+</script>
+
+<script id="edit_panel_date" type="text/html">
+	<div class="form-group" tag="<#=key#>">
+    	<label class="col-sm-2 control-label"><#if(model.required) {#><span style="color:#F00;">*</span><#}#><#=model.label#>：</label>
+    	<div class="col-xs-1">
+    		<input type="text" name="<#=name#>" class="form-control" value="<#=model.defaultValue#>">
+  		</div>
+		<label class="control-label"><#=model.desc#></label>
+	</div>
+</script>
+
+<script id="edit_panel_select" type="text/html">
+	<div class="form-group" tag="<#=key#>">
+    	<label class="col-sm-2 control-label"><#if(model.required) {#><span style="color:#F00;">*</span><#}#><#=model.label#>：</label>
+    	<div class="col-xs-2">
+			<select class="form-control" name="<#=name#>">
+				<#for(var i in model.options) {#>
+					<#var opt = model.options[i];#>
+					<option value="<#=opt.val#>" <#=opt.val==model.defaultValue?'selected':''#> ><#=model.options[i].label#></option>
+				<#}#>
+			</select>
+  		</div>
+		<label class="control-label"><#=model.desc#></label>
+	</div>
+</script>
+
+<script id="edit_panel_radio" type="text/html">
+	<div class="form-group" tag="<#=key#>">
+    	<label class="col-sm-2 control-label"><#if(model.required) {#><span style="color:#F00;">*</span><#}#><#=model.label#>：</label>
+    	<div class="col-xs-2">
+			<#for(var i in model.options) {#>
+				<#var opt = model.options[i];#>
+    			<div class="radio">
+					<label class="checkbox-inline">
+    					<input type="radio" name="<#=name#>" value="<#=opt.val#>" <#=opt.val==model.defaultValue?'checked':''#>>
+    					<#=opt.label#>
+  					</label>
+				</div>
+			<#}#>
+  		</div>
+		<label class="control-label"><#=model.desc#></label>
+	</div>
+</script>
+
+<script id="edit_panel_checkbox" type="text/html">
+	<div class="form-group" tag="<#=key#>">
+    	<label class="col-sm-2 control-label"><#if(model.required) {#><span style="color:#F00;">*</span><#}#><#=model.label#>：</label>
+    	<div class="col-xs-2">
+			<#for(var i in model.options) {#>
+				<#var opt = model.options[i];#>
+    				<div class="checkbox">
+						<label>
+							<input val="<#=key#>" type="checkbox" name="<#=name#>" value="<#=opt.val#>" <#=opt.val==model.defaultValue?'checked':''#>> <#=opt.label#>
+						</label>
+					</div>
+				<#}#>
+  			</div>
+		<label class="control-label"><#=model.desc#></label>
+	</div>
+</script>
+
+
+<script type="text/javascript">
+;(function($) {
+template.openTag = '<#';
+template.closeTag = '#>';	
+
+	var C = {
+		selectList : []
+	};
+	$.extend(C, {
+		init : function() {
+			this.fetchList();
+			this.bindSelectRecord();
+			this.bindGetItems();
+			this.bindSave();
+		},
+		fetchList : function() {
+			var _this = this;
+			$.ajax({
+				url : '/dev/getList',
+				dateType : 'json',
+				success : function(data) {
+					if(data.errorCode == 0) {
+						_this.selectList = data.data;
+						_this.renderList(data.data);
+					}
+				}
+			});
+		},
+		renderList : function(records) {
+			var _html = template.render('template_select_module_item', {records : records});
+			$('#module_list_select').html(_html);
+		},
+		renderItem : function(record) {
+			var modelList = record.json;
+			var _html = '<div fmid="'+record._id+'" style="border:1px dashed #999;margin-bottom:5px;">';
+			for(var i in modelList) {
+				var _temp = 'r_'+(Math.random()+'').replace('0.', '');
+				var _name = _temp+'_'+record._id;	// 组里唯一
+				_html += template.render('edit_panel_'+modelList[i].type, {model : modelList[i], key:i, name : _name});
+			}
+			_html += '</div>';
+			$('#test').append(_html);
+		},
+		findRecordById : function(id) {
+			for(var i in this.selectList) {
+				var record = this.selectList[i];
+				if(record._id == id) {
+					return record;
+				}
+			}
+			return null;
+		},
+		bindSelectRecord : function() {
+			var _this = this;
+			$('#module_list_select').on('click', 'A[mid]', function() {
+				var record = _this.findRecordById($(this).attr('mid'));
+				_this.renderItem(record);
+			});
+		},
+		getItems : function() {
+			var modelList = [];
+			$('#test [fmid]').each(function() {
+				var m = {};
+				$(this).find('[tag]').each(function() {
+					var key = $(this).attr('tag');
+					var item = $(this).find('[name]');
+					var val = '';
+					if(item.prop('type') == 'radio') {
+						val = $(this).find('[name]:checked').val();
+					}else if(item.prop('type') == 'checkbox') {
+						val = [];
+						$(this).find('[name]:checked').each(function() {
+							val.push(this.value);
+						});
+					}else {
+						val = item.val();
+					}
+					m[key] = val;
+				});
+				var model = {};
+				var id = $(this).attr('fmid') + '_' +(Math.random()+'').replace('0.', '');
+				model[id] = m;
+				modelList.push(model);
+			});
+			return modelList;
+		},
+		bindGetItems : function() {
+			var _this = this;
+			$('#get_model').click(function() {
+				var modelList = _this.getItems();
+				console.log(JSON.stringify(modelList));
+			});
+		},
+		bindSave : function() {
+			var _this = this;
+			$('#save_page').click(function() {
+				var modelList = _this.getItems();
+				var param = {};
+				param.json = JSON.stringify(modelList);
+				console.log(JSON.stringify(modelList));
+				$.ajax({
+					url : '/seller/save',
+					data : param,
+					dataType : 'json',
+					method : 'post',
+					success : function(data) {
+						console.log(data);
+						if(data.errorCode == 0) {
+							
+						}
+					}
+				});
+				
+			});
+		}
+	});
+	$(document).ready(function() {
+		C.init();
+	});
+})(jQuery);
+</script>
+
+<script id="template_select_module_item" type="text/html">
+	<#for(var i in records) {#>
+		<#var record = records[i];#>
+		<p><a mid="<#=record._id#>" href="javascript:;"><#=record.name#></a></p>
+	<#}#>
+</script>
+</body>
+</html>

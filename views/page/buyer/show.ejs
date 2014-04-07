@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>买家展示</title>
+	<link rel='stylesheet' type="text/css" href="/stylesheets/bootstrap.css" />
+	<!--<link rel='stylesheet' type="text/css" href="http://www.bootcss.com/p/layoutit/css/bootstrap-combined.min.css" />-->
+	
+	<script type="text/javascript" src="/javascripts/jquery-2.0.0.min.js"></script>
+	<!--<script type="text/javascript" src="http://www.bootcss.com/p/layoutit/js/jquery-2.0.0.min.js"></script>-->
+	
+	<script type="text/javascript" src="http://static.paipaiimg.com/js/victor/lib/template.js"></script>
+</head>
+<body>
+
+<% include ../../include/nav.ejs %>
+
+
+<script type="text/javascript">
+var id = '<%=id%>';
+;(function($) {
+	var C = {};
+	$.extend(C, {
+		init : function() {
+			this.fetchPage();
+		},
+		fetchPage : function() {
+			var _this = this;
+			$.ajax({
+				url : '/buyer/get?id='+id,
+				dateType : 'json',
+				success : function(data) {
+					if(data.errorCode == 0) {
+						_this.renderPage(data.data.json);
+					}
+				}
+			});
+		},
+		renderPage : function(modelList) {
+			var style = '';
+			var html = '';
+			for(var i in modelList) {
+				var record = modelList[i];
+				var render = template.compile(record.temp);
+				html += '<div id="m_'+record.rid+'">' + render({model:record.json}) + '</div>';
+				
+				var _css = this.rewriteCss(record.rid, record.css);
+				style += _css;
+			}
+			console.log(style)
+			$(document.head).append('<style>'+style+'</style>');
+			$(document.body).append(html);
+		},
+		rewriteCss : function(id, css) {
+			css = css.replace(/[\r\n]+/g, '');
+			var arr = css.split('}');
+			var result = [];
+			for(var i in arr) {
+				if($.trim(arr[i])) {
+					var temp = '\n#m_'+id+' ' + arr[i] +'}';
+					result.push(temp);
+				}
+			}
+			return result.join('');
+		}
+	});
+	$(document).ready(function() {
+		C.init();
+	});
+})(jQuery);
+
+</script>
+
+</body>
+</html>

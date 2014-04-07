@@ -1,19 +1,76 @@
-{
-	name : {
-		type : 'text',
-		label : '主题',
-		default : '',
-		max-length : 100
-	},
-	color : {
-		type : 'color',
-		label : '颜色'
-	},
-	link : {
-		type : 'link',
-		label : '跳转链接'
-	}
-}
-
-
-<div><a href="<%=model.link%>" style="color:<%=model.color%>"><%=model.name%></a></div>
+	{
+			"name" : {
+				"type" : "text",
+				"label" : "主题",
+				"required" : true,
+				"defaultValue" : "aaaa",
+				"desc" : "这回事",
+				"rule" : "",
+				"maxLength" : 150
+			},
+			"color" : {
+				"type" : "color",
+				"required" : true,
+				"defaultValue" : "#fff000",
+				"label" : "颜色",
+				"desc" : "这是选择颜色"
+			},
+			"font" : {
+				"type" : "select",
+				"label" : "字体",
+				"required" : false,
+				"options" : [
+						  {"val":"Microsoft Yahei","label":"微软雅黑"},
+						  {"val":"SimSun","label":"宋体"},
+						  {"val":"kaiti","label":"楷体"},
+						  {"val":"SimHei","label":"黑体"},
+						  {"val":"lishu","label":"隶书"},
+						  {"val":"arial","label":"arial"},
+						  {"val":"comicSansMs","label":"comic sans ms"},
+						  {"val":"impact","label":"impact"},
+						  {"val":"timesNewRoman","label":"times new roman"}
+					],
+				"defaultValue" : "SimHei",
+				"desc" : "请选择字体"
+			},
+			"beginDate" : {
+				"type" : "date",
+				"required" : false,
+				"defaultValue" : "2014-04-04",
+				"label" : "开始日期",
+				"desc" : "请选择日期"
+			},
+			"sex" : {
+				"type" : "radio",
+				"required" : false,
+				"options" : [
+				           {"val" : "men", "label" : "男"},
+				           {"val" : "women", "label" : "女"}
+				           ],
+				"defaultValue" : "women",
+				"label" : "性别",
+				"desc" : "请选择性别"
+			},
+			"tick" : {
+				"type" : "checkbox",
+				"required" : false,
+				"options" : [
+				           {"val" : "sz", "label" : "深圳"},
+				           {"val" : "gz", "label" : "广州"},
+				           {"val" : "bj", "label" : "北京"},
+				           {"val" : "sh", "label" : "上海"}
+				           ],
+				"defaultValue" : "gz",
+				"label" : "区域",
+				"desc" : "参与调查"
+			},
+			"link" : {
+				"type" : "text",
+				"label" : "跳转链接",
+				"required" : true,
+				"defaultValue" : "bbbb",
+				"desc" : "这回事",
+				"rule" : "",
+				"maxLength" : 150
+			}
+		}

@@ -1,5 +1,6 @@
 module.exports = {
 	cookieSecret: 'modulekenluo',
 	db: 'module',
-	host: 'localhost'
+	host : 'localhost',
+	port : 27017
 };

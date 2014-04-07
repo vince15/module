@@ -1,0 +1,9 @@
+<div class="mp">
+<p class="mp_title">标题 : <%=model.name%></p>
+<p class="mp_color">颜色 : <%=model.color%></p>
+<p class="mp_font">字体 : <%=model.font%></p>
+<p class="mp_data">开始日期 : <%=model.beginDate%></p>
+<p class="mp_sex">性别 : <%=model.sex%></p>
+<p class="mp_area">区域: <%=model.tick[0]%>,<%=model.tick[1]%></p>
+<p class="mp_link"链接: <%=model.link%></p>
+</div>

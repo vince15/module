@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>编辑区域</title>
+	<link rel='stylesheet' type="text/css" href="/stylesheets/bootstrap.css" />
+	<!--<link rel='stylesheet' type="text/css" href="http://www.bootcss.com/p/layoutit/css/bootstrap-combined.min.css" />-->
+	
+	<script type="text/javascript" src="/javascripts/jquery-2.0.0.min.js"></script>
+	<!--<script type="text/javascript" src="http://www.bootcss.com/p/layoutit/js/jquery-2.0.0.min.js"></script>-->
+</head>
+<body>
+
+<% include ../../include/nav.ejs %>
+
+
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    <label for="p_name" class="col-sm-2 control-label">组件名称</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="p_name" placeholder="5个字以内">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="p_desc" class="col-sm-2 control-label">组件描述</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="p_desc" placeholder="200个字以内">
+    </div>
+  </div>
+</form>
+
+<form name="edit_form"  method="post">
+<div>
+	<div style="float:left;width:33.333%;padding-right:10px;">
+		<div class="panel panel-primary">
+		  <div class="panel-heading">
+			<h3 class="panel-title">JSON编辑面板</h3>
+		  </div>
+		  <div class="panel-body">
+			<textarea id="p_json" name="json" style="width:100%;height:200px;"></textarea>
+		  </div>
+		</div>
+	</div>
+	<div style="float:left;width:33.333%;padding-right:10px;">
+		<div class="panel panel-success">
+		  <div class="panel-heading">
+			<h3 class="panel-title">CSS编辑面板</h3>
+		  </div>
+		  <div class="panel-body">
+			<textarea id="p_css" name="css" style="width:100%;height:200px;"></textarea>
+		  </div>
+		</div>
+	</div>
+	<div style="float:left;width:33.333%;">
+		<div class="panel panel-info">
+		  <div class="panel-heading">
+			<h3 class="panel-title">渲染模板编辑面板</h3>
+		  </div>
+		  <div class="panel-body">
+			<textarea id="p_temp" name="temp" style="width:100%;height:200px;"></textarea>
+		  </div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div style="text-align:center;">
+	<div class="btn-group btn-group-lg">
+	  <button type="button" class="btn btn-default">预览</button>
+	  <button id="submit" type="button" class="btn btn-primary">保存</button>
+	</div>
+</div>
+</form>
+<script type="text/javascript">
+(function($) {
+	var Dev = {};
+	$.extend(Dev, {
+		init : function() {
+			var _this = this;
+			$('#submit').click(function() {
+				var param = _this.getParam();
+				_this.save(param);
+			});
+		},
+		getParam : function() {
+			var $json = $('#p_json');
+			var $css = $('#p_css');
+			var $temp = $('#p_temp');
+			var $name = $('#p_name');
+			var $desc = $('#p_desc');
+			var _name = $.trim($name.val());
+			var _desc = $.trim($desc.val());
+			var _json = $.trim($json.val());
+			var _temp = $.trim($temp.val());
+			var _css = $.trim($css.val());
+			if(!_name) {
+				alert('请输入组件名称');
+				return;
+			}
+			if(!_json) {
+				alert('请输入JSON结构');
+				return;
+			}else {
+				try {
+					_json = JSON.parse(_json);	// 检查是否符合JSON规范
+					_json = JSON.stringify(_json);	// 重新变成字符串，去除了多余的格式占位符
+				}catch(e) {
+					alert('请输入正确的JSON格式');
+					return;
+				}
+			}
+			if(!_temp) {
+				alert('请输入渲染模板');
+				return;
+			}
+			var param = {};
+			param.name = _name;
+			param.json = _json;
+			param.temp = _temp;
+			if(_desc) {
+				param.desc = _desc;
+			}
+			if(_css) {
+				param.css = _css;
+			}
+			console.log(param)
+			return param;
+		},
+		save : function(param) {
+			if(!param) {
+				return;
+			}
+			$.ajax({
+				url : '/dev/save',
+				data : param,
+				method : 'post',
+				dataType : 'json',
+				success : function(data) {
+					alert('保存成功');
+				}
+			});
+		}
+	});
+	$(document).ready(function() {
+		Dev.init();
+	});
+})(jQuery);
+
+</script>
+
+</body>
+</html>

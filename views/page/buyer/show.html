@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+<title>数据</title>
+<link rel="stylesheet" href="bootstrap.min.css" />
+<script type="text/javascript" src="jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="bootstrap.min.js"></script>
+<script type="text/javascript" src="http://static.paipaiimg.com/js/victor/lib/template.js"></script>
+
+
+</head>
+<body>
+<div id="show">
+</div>
+
+<script id="temp" type="text/html">
+<p>标题 : <%=model.name%></p>
+<p>颜色 : <%=model.color%></p>
+<p>字体 : <%=model.font%></p>
+<p>开始日期 : <%=model.beginDate%></p>
+<p>性别 : <%=model.sex%></p>
+<p>区域: <%=model.tick[0]%>,<%=model.tick[1]%></p>
+<p>链接: <%=model.link%></p>
+</script>
+<script type="text/javascript">
+var model = {"name":"aaaa","color":"#fff000","font":"SimHei","beginDate":"2014-04-04","sex":"women","tick":["gz","bj"],"link":"bbbb"};
+var html = template.render('temp', {model : model});
+$('#show').html(html);
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.mp {background:#999;margin:5px;}
+.mp_title {background:#00F;}
+.mp_color {color:#F00;}
+.mp_font {font-size:30px;}
+.mp_data {background:#0F0;}
+.mp_sex {color:FF0;}
+.mp_area {border:1px solid #333;}
+.mp_link {color:#00F;padding:10px;}
